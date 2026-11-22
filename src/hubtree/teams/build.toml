@@ -1,0 +1,33 @@
+# Team template "build": a planner, 3 builders and a checker.
+# Start: hubtree swarm team build --parent <session> --goal "<the goal>"
+# Each role starts as a background child of the current session. A role with `after` waits as queued until each
+# member of those roles posts a result (when = "released") or is accepted or ended (when = "done").
+# Placeholders in task: {goal} {team} {role} {i} {n} {team_dir} (a shared folder for hand-off files) {deps}.
+# budget_usd goes to spawn.py --budget-usd (swarm_obs.py pauses a child at 100%).
+
+description = "a planner, 3 builders, a checker"
+
+[defaults]
+model = "sonnet"
+auto = true
+budget_usd = 5
+
+[[role]]
+name = "planner"
+task = """Write a short plan for the goal into {team_dir}/plan.md: 3 parts that 3 builders can do in parallel
+(part 1, part 2, part 3), each with its files and its done test. Do not build. Then post your result."""
+
+[[role]]
+name = "builder"
+count = 3
+after = ["planner"]
+task = """Read {team_dir}/plan.md. Build part {i} only, and touch only the files of part {i}. Run its done test.
+Commit your files by name. Write a 5-line report to {team_dir}/build_{i}.md. Then post your result."""
+
+[[role]]
+name = "checker"
+after = ["builder"]
+model = "opus"
+budget_usd = 3
+task = """Read {team_dir}/plan.md and the build reports {team_dir}/build_*.md. Run every done test again. Write the
+verdict per part (pass or fail, with the proof) to {team_dir}/check.md. Do not fix code. Then post your result."""

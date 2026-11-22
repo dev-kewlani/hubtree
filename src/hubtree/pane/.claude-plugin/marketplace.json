@@ -1,0 +1,5 @@
+{
+  "name": "hubtree",
+  "owner": { "name": "hubtree" },
+  "plugins": [{ "name": "hubtree", "source": "./" }]
+}

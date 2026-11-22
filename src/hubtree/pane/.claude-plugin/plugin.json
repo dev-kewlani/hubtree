@@ -1,0 +1,6 @@
+{
+  "name": "hubtree",
+  "version": "0.1.0",
+  "description": "Side pane with the live session tree: open, message and watch sessions from any Claude session",
+  "types": "./types/index.d.ts"
+}
