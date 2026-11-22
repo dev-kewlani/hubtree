@@ -84,7 +84,7 @@ def prepare_resume(session_id, cwd, transcript=None):
         return target  # Claude Code finds the transcript in this folder's project already
     src = transcript
     if not src or not os.path.exists(src):
-        hits = [p for p in (os.path.join(PROJECTS, d, session_id + ".jsonl") for d in os.listdir(PROJECTS)) if os.path.exists(p)]
+        hits = [p for p in (os.path.join(PROJECTS, d, session_id + ".jsonl") for d in (os.listdir(PROJECTS) if os.path.isdir(PROJECTS) else [])) if os.path.exists(p)]
         src = max(hits, key=os.path.getsize) if hits else None
     if src and os.path.exists(src):
         dst_dir = os.path.join(PROJECTS, project_key(target))

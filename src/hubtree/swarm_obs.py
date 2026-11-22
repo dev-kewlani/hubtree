@@ -176,7 +176,7 @@ def target(name, inp):
         return ""
     for k in ("file_path", "notebook_path", "path"):
         if isinstance(inp.get(k), str) and inp[k]:
-            return os.path.basename(inp[k].rstrip("\\/")) or inp[k]
+            return inp[k].rstrip("\\/").replace("\\", "/").rsplit("/", 1)[-1] or inp[k]  # a path of any OS
     if isinstance(inp.get("command"), str):
         return inp["command"].strip().splitlines()[0][:60] if inp["command"].strip() else ""
     for k in ("pattern", "skill", "description", "url", "query", "to", "subagent_type"):

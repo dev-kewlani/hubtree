@@ -198,7 +198,7 @@ class TestClaims(Base):
         self.start("B", "hub/p2/b~auto", "P2")
         f = os.path.join(self.dir, "shared.txt")
         self.ledger("A", f)
-        self.ledger("B", f.upper())  # the same file in another case
+        self.ledger("B", f.upper() if os.name == "nt" else f)  # Windows: the same file in another case
         self.ledger("A", os.path.join(self.dir, "only_a.txt"))
         self.live = {"A": {"kind": "background", "state": "working"}, "B": {"kind": "background", "state": "idle"}}
         cf = S.conflicts(["A", "B"])

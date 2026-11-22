@@ -14,4 +14,5 @@ os.environ.setdefault("HUBTREE_ROOT", os.path.join(_HOME, "root"))
 os.environ.setdefault("HUBTREE_DB", os.path.join(_HOME, "state", "hubtree.db"))
 os.environ["HUBTREE_TERMINAL"] = "print"
 os.environ["HUBTREE_NO_DAEMON"] = "1"
+os.environ["CLAUDE_CONFIG_DIR"] = os.path.join(_HOME, "claude")  # never the real Claude Code folder
 os.makedirs(os.environ["HUBTREE_ROOT"], exist_ok=True)
