@@ -75,8 +75,7 @@ def ledger(data):
     os.makedirs(d, exist_ok=True)
     with open(os.path.join(d, safe + ".jsonl"), "a", encoding="utf-8") as f:
         f.write(json.dumps({"ts": T.now(), "sid": sid, "tool": data.get("tool_name"),
-                            "path": os.path.normpath(path)}) + "
-")
+                            "path": os.path.normpath(path)}) + "\n")
 
 
 def run(event, data):

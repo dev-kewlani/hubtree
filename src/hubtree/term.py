@@ -31,6 +31,12 @@ def backend():
     return b
 
 
+def claude_cmd():
+    """The claude command as an argv prefix: ["claude"], or the JSON list in env HUBTREE_CLAUDE (tests use a stub)."""
+    v = os.environ.get("HUBTREE_CLAUDE")
+    return json.loads(v) if v else ["claude"]
+
+
 def claude_args():
     """The extra arguments of every session that hubtree starts ([hubtree] claude_args)."""
     return list(htconf.load().claude_args)

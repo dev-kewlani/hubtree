@@ -1,0 +1,57 @@
+name: ci
+
+on:
+  push:
+  workflow_dispatch:
+
+jobs:
+  test:
+    strategy:
+      fail-fast: false
+      matrix:
+        os: [ubuntu-latest, macos-latest, windows-latest]
+        python: ["3.11", "3.13"]
+    runs-on: ${{ matrix.os }}
+    timeout-minutes: 20
+    defaults:
+      run:
+        shell: bash
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: ${{ matrix.python }}
+      - uses: actions/setup-node@v4
+        with:
+          node-version: "22"
+      - name: tmux (macOS and Linux)
+        if: runner.os != 'Windows'
+        run: |
+          if [ "$RUNNER_OS" = "Linux" ]; then sudo apt-get update -q && sudo apt-get install -y -q tmux; else brew install tmux; fi
+          tmux -V
+      - name: Claude Code CLI (plugin commands only; no login, no model call)
+        run: |
+          npm install -g @anthropic-ai/claude-code
+          claude --version
+      - name: unit tests (from source)
+        run: |
+          python -m pip install -q pytest textual rich
+          python -m pytest -q
+      - name: build and install the wheel with pipx
+        run: |
+          python -m pip install -q build pipx
+          python -m build --wheel
+          python -m pipx install dist/*.whl
+          echo "HUBTREE_BIN=$(python -m pipx environment --value PIPX_BIN_DIR)" >> "$GITHUB_ENV"
+      - name: end-to-end install test (installed command, side pane, tmux on macOS and Linux)
+        run: |
+          export HUBTREE_E2E_CMD="$HUBTREE_BIN/hubtree"
+          if [ "$RUNNER_OS" = "Windows" ]; then export HUBTREE_E2E_CMD="$HUBTREE_BIN/hubtree.exe" HUBTREE_E2E_TERMINAL=print; else export HUBTREE_E2E_TERMINAL=tmux; fi
+          export HUBTREE_E2E_PANE=1
+          python -m pytest -q -s tests/test_e2e_flow.py
+      - name: side pane tests
+        run: |
+          export CLAUDE_CONFIG_DIR="$RUNNER_TEMP/claude-profile"
+          mkdir -p "$CLAUDE_CONFIG_DIR"
+          claude plugin validate src/hubtree/pane
+          claude plugin test src/hubtree/pane

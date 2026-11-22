@@ -260,7 +260,7 @@ def launch(name, pid, cwd, level, task_file, o, qid=None):
         args += ["--remote-control", name]
 
     if auto:
-        cmd = ["claude", "--bg"] + args + [prompt]
+        cmd = term.claude_cmd() + ["--bg"] + args + [prompt]
         r = subprocess.run(cmd, cwd=cwd, env=term.child_env(), capture_output=True, text=True, timeout=60,
                            creationflags=term.NO_WINDOW)
         ok = r.returncode == 0
@@ -270,7 +270,7 @@ def launch(name, pid, cwd, level, task_file, o, qid=None):
              "autopilot": not o.get("interactive"), "out": (r.stdout or r.stderr).strip()[-300:]}, 0 if ok else 1)
 
     try:
-        term.open_tab(name, T.resolve_cwd(cwd), ["claude"] + args + [prompt])
+        term.open_tab(name, T.resolve_cwd(cwd), term.claude_cmd() + args + [prompt])
     except (RuntimeError, OSError) as e:
         out({"ok": False, "name": name, "error": f"could not open a tab: {e}"}, 1)
     if qid:
