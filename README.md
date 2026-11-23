@@ -22,7 +22,7 @@ Claude Code has its own agent view (`claude agents`), which shows what runs and 
 You need Python 3.11 or newer, Claude Code, and a terminal back end: Windows Terminal on Windows, tmux on macOS and Linux.
 
 ```
-pipx install git+https://github.com/dev-kewlani/hubtree
+pipx install hubtree        # or: uv tool install hubtree
 cd ~/projects               # the folder whose sub-folders become the tree
 hubtree init
 ```
